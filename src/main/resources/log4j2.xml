@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p -&#45;&#45;  %-40.40c{1.} : %m%n%ex
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+
+
+        <RollingFile
+                name="FileAppender"
+                fileName="logs/application.log"
+        filePattern="logs/application.%d{dd-MMM}.log.gz"
+        ignoreExceptions="false">
+        <PatternLayout>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+        </PatternLayout>
+        <Policies>
+            <OnStartupTriggeringPolicy />
+            <SizeBasedTriggeringPolicy size="10 MB" />
+            <TimeBasedTriggeringPolicy />
+        </Policies>
+        <DefaultRolloverStrategy max="5" />
+    </RollingFile>
+
+
+</Appenders>
+<Loggers>
+<AsyncLogger name="com.base.kullanatnoktacom" level="debug"
+             additivity="false">
+    <AppenderRef ref="ConsoleAppender" />
+    <AppenderRef ref="FileAppender" />
+</AsyncLogger>
+
+<Root level="info">
+    <AppenderRef ref="ConsoleAppender" />
+    <AppenderRef ref="FileAppender" />
+</Root>
+</Loggers>
+
+
+</Configuration>
