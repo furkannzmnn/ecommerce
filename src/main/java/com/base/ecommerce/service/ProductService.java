@@ -9,8 +9,18 @@ import com.base.ecommerce.exception.customException.ProductNotFoundException;
 import com.base.ecommerce.model.Product;
 import com.base.ecommerce.model.ProductStatus;
 import com.base.ecommerce.repository.ProductRepository;
+import org.apache.kafka.common.Node;
+import org.apache.kafka.common.PartitionInfo;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.ElasticsearchClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Async;
@@ -19,8 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -57,14 +66,14 @@ public class ProductService {
 
         ProductLiveValidation.isValid(productRequest);
         final Product product = new Product.Builder()
-                .productTitle(productRequest.getProductTitle())
-                .productDesc(productRequest.getProductDesc())
-                .productName(productRequest.getProductName())
-                .category(productRequest.getCategory())
-                .creatAt(productRequest.getCreatAt())
+                .productTitle(Objects.requireNonNull(productRequest.getProductTitle()))
+                .productDesc(Objects.requireNonNull(productRequest.getProductDesc()))
+                .productName(Objects.requireNonNull(productRequest.getProductName()))
+                .category(Objects.requireNonNull(productRequest.getCategory()))
+                .creatAt(Objects.requireNonNull(productRequest.getCreatAt()))
                 .updateAt(Objects.requireNonNull(productRequest.getUpdateAt()))
+                .productPrice(Objects.requireNonNull(productRequest.getProductPrice()))
                 .productStatus(status)
-                .productPrice(productRequest.getProductPrice())
                 .build();
 
 
@@ -122,7 +131,7 @@ public class ProductService {
 
     public void deleteProductData(int id) {
         Product product = findByIdProduct(id);
-        this.productRepository.deleteById(product.getId());
+        this.productRepository.deleteById(Objects.requireNonNull(product.getId()));
     }
 
     @Async
@@ -145,7 +154,6 @@ public class ProductService {
     public List<String> uploadAlbums(MultipartFile[] multipartFiles) {
         return implUploadService.uploadMultipleImage(multipartFiles);
     }
-
 
 
 

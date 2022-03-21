@@ -40,10 +40,6 @@ class Product constructor (
     @field:Enumerated(EnumType.STRING)
     var productStatus: ProductStatus? = null,
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    val image: List<Image>? = Collections.emptyList(),
-
     val productTimeExpired: LocalDateTime? = null
 
 ) {
@@ -59,7 +55,6 @@ class Product constructor (
         var isActive:Boolean? = true,
         var category: Category?= null,
         var productStatus: ProductStatus? = null,
-        var image: List<Image>? = Collections.emptyList(),
         var productTimeExpired: LocalDateTime? = null
     ) {
 
@@ -73,9 +68,8 @@ class Product constructor (
         fun isActive(isActive: Boolean) = apply { this.isActive = isActive }
         fun category(category: Category) = apply { this.category = category }
         fun productStatus(productStatus: ProductStatus) = apply { this.productStatus = productStatus }
-        fun image(image: Image) = apply { this.image = listOf(image) }
         fun productTimeExpired(productTimeExpired: LocalDateTime) = apply { this.productTimeExpired = productTimeExpired }
         fun build() = Product(id,productName, productTitle, productDesc, productPrice, creatAt, updateAt, productImageURL,
-            isActive, category, productStatus, image, productTimeExpired)
+            isActive, category, productStatus,  productTimeExpired)
     }
 }

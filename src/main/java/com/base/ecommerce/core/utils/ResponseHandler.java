@@ -10,6 +10,9 @@ import java.util.Map;
 @Deprecated(since = "1.0.0")
 public class ResponseHandler {
 
+    private ResponseHandler() {
+    }
+
     public static ResponseEntity<Object> jsonGenerateResponse(String messageDetails,
                                                               HttpStatus httpStatus,
                                                               Object responseObj) {

@@ -84,6 +84,8 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+
+
   ecommerce:
     image: ecommerce
     ports:
@@ -92,12 +94,14 @@ services:
       - $HOME/app:/var/app
     links:
       - "logstash:logstash"
+      - "db:db"
+
     depends_on:
       - kibana
-      - postgresql
 
-  postgresql:
-    image: postgres:10.4
+
+  db:
+    image: postgres
     volumes:
       - ./postgresql/:/var/lib/postgresql/data/
     environment:
@@ -106,3 +110,5 @@ services:
       - POSTGRES_DB=kullanat
     ports:
       - "5432:5432"
+    container_name: db
+
