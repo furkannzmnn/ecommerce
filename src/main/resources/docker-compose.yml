@@ -88,27 +88,68 @@ services:
 
   ecommerce:
     image: ecommerce
+    # assign a name to this container
+    container_name: ecommerce
     ports:
       - "8089:8089"
     volumes:
       - $HOME/app:/var/app
+    # connect this container to the user-defined network
+    networks:
+      - my-network
     links:
       - "logstash:logstash"
-      - "db:db"
-
     depends_on:
       - kibana
+      - postgresql
+      - redis
 
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgresql:5432/kullanat
+      - spring.redis.host=redis
+      - spring.redis.port=6379
+      - kafka.bootstrap.servers= broker:29092
+      - kafka.consumer.group-id=group_id
 
-  db:
-    image: postgres
+  postgresql:
+    image: postgres:11.1-alpine
+    # assign a name to this container
+    container_name: postgresql
     volumes:
       - ./postgresql/:/var/lib/postgresql/data/
+      # connect this container to the user-defined network my-network
+    networks:
+      - my-network
     environment:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_USER=postgres
       - POSTGRES_DB=kullanat
     ports:
       - "5432:5432"
-    container_name: db
+
+  redis:
+    image: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - ENV_REDIS_HOST=redis
+      - ENV_REDIS_PORT=6379
+    networks:
+      - my-network
+    ports:
+      - '127.0.0.1:6379:6379/tcp'
+
+    healthcheck:
+        test: redis-cli ping
+        interval: 3s
+        timeout: 5s
+        retries: 5
+
+    volumes:
+      - $HOME/app:/var/app
+    expose:
+      - "6379"
+
+
+networks:
+  my-network:
 

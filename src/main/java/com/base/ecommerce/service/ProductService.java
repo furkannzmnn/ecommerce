@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,14 +78,21 @@ public class ProductService {
                 .productStatus(status)
                 .build();
 
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-        CompletableFuture.runAsync(() -> {
+        executorService.submit(() -> {
+            try {
+                CompletableFuture.runAsync(() -> {
                     ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
-            future.addCallback(
-                    result -> System.out.println("Sent message: " + product.getProductName()),
-                    ex -> System.out.println("Unable to send message: " + ex.getMessage())
-            );
+                    future.addCallback(
+                            result -> System.out.println("Sent message: " + product.getProductName()),
+                            ex -> System.out.println("Unable to send message: " + ex.getMessage())
+                    );
                 });
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+                }, executorService);
 
         return productDtoConverter.convertToProduct(productRepository.save(product));
 
