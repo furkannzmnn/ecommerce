@@ -8,6 +8,9 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+    networks:
+      - my-network
+
   broker:
     image: confluentinc/cp-kafka:7.0.1
     container_name: broker
@@ -25,6 +28,12 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      kafka.bootstrap.servers: broker:9092
+      GROUP_ID: group_id
+      KAFKA_CREATE_TOPICS: "product"
+
+    networks:
+      - my-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui
@@ -37,6 +46,9 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=broker:29092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
       - KAFKA_CLUSTERS_0_READONLY=true
+
+    networks:
+      - my-network
 
   filebeat:
     image: filebeat
@@ -87,8 +99,9 @@ services:
 
 
   ecommerce:
+
     image: ecommerce
-    # assign a name to this container
+    # assign a name to this containerr
     container_name: ecommerce
     ports:
       - "8089:8089"
@@ -99,17 +112,28 @@ services:
       - my-network
     links:
       - "logstash:logstash"
+
+    expose:
+      - "8089"
     depends_on:
       - kibana
       - postgresql
       - redis
+      - zookeeper
+      - broker
 
     environment:
       - spring.datasource.url=jdbc:postgresql://postgresql:5432/kullanat
       - spring.redis.host=redis
       - spring.redis.port=6379
-      - kafka.bootstrap.servers= broker:29092
-      - kafka.consumer.group-id=group_id
+      - kafka.group.id=group_id
+      - kafka.bootstrap.servers=broker:29092
+      - kafka.consumer.group.id=group_id
+      - kafka.consumer.enable.auto.commit=true
+      - kafka.consumer.auto.commit.interval.ms=1000
+      - kafka.consumer.auto.offset.reset=earliest
+      - kafka.consumer.max.poll.records=1
+      - server.port=8089
 
   postgresql:
     image: postgres:11.1-alpine
