@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -55,9 +56,10 @@ public class ImplUploadService implements UploadService {
     public List<String> uploadMultipleImage(MultipartFile[] multipartFiles) {
         StringBuilder sb = new StringBuilder();
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            sb.append(upload(multipartFile)).append(IMAGE_SPLIT_PREFIX);
-        }
+        Consumer<StringBuilder> consumer = s -> Arrays.stream(multipartFiles).forEach(multipartFile ->
+                s.append(multipartFile.getOriginalFilename()).append(IMAGE_SPLIT_PREFIX));
+
+        consumer.accept(sb);
 
         final String[] split = sb.toString().split(IMAGE_SPLIT_PREFIX);
 

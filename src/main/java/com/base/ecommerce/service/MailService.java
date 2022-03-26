@@ -9,16 +9,17 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 @Service
 public class MailService {
 
-    private final Logger logger = Logger.getLogger(MailService.class.getName());
+    private static final Logger logger  = LogManager.getLogger(MailService.class);
 
     private static final String SYSTEM_MAIL_ADDRESS = "ozmenf97@gmail.com";
     private static final String SYSTEM_INFO_MAIL_ADDRESS = "furkan.ozmen@tapu.com";

@@ -1,9 +1,7 @@
 package com.base.ecommerce.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.CreatedDate
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -40,7 +38,8 @@ class Product constructor (
     @field:Enumerated(EnumType.STRING)
     var productStatus: ProductStatus? = null,
 
-    val productTimeExpired: LocalDateTime? = null
+    val productTimeExpired: LocalDateTime? = null,
+    var buyerId: Int? = null,
 
 ) {
     data class Builder constructor(
@@ -55,7 +54,8 @@ class Product constructor (
         var isActive:Boolean? = true,
         var category: Category?= null,
         var productStatus: ProductStatus? = null,
-        var productTimeExpired: LocalDateTime? = null
+        var productTimeExpired: LocalDateTime? = null,
+        var buyerId: Int? = null
     ) {
 
         fun id(id: Int) = apply { this.id = id }
@@ -67,9 +67,10 @@ class Product constructor (
         fun updateAt(updateAt: LocalDateTime) = apply { this.updateAt = updateAt }
         fun isActive(isActive: Boolean) = apply { this.isActive = isActive }
         fun category(category: Category) = apply { this.category = category }
+        fun buyerId(buyerId: Int) = apply { this.buyerId = buyerId }
         fun productStatus(productStatus: ProductStatus) = apply { this.productStatus = productStatus }
         fun productTimeExpired(productTimeExpired: LocalDateTime) = apply { this.productTimeExpired = productTimeExpired }
         fun build() = Product(id,productName, productTitle, productDesc, productPrice, creatAt, updateAt, productImageURL,
-            isActive, category, productStatus,  productTimeExpired)
+            isActive, category, productStatus,  productTimeExpired, buyerId)
     }
 }

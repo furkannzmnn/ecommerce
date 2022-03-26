@@ -5,6 +5,7 @@ import com.base.ecommerce.dto.ErrorCode;
 import com.base.ecommerce.exception.customException.DiscountedInvalidException;
 import com.base.ecommerce.model.Product;
 import com.base.ecommerce.repository.AdvertisementRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ public class DiscountService {
         this.productService = productService;
     }
 
-    public void applyDiscountedForProduct(BigDecimal discountedPrice, int productId) {
+    public void applyDiscountedForProduct(@NotNull BigDecimal discountedPrice, int productId) {
 
         Product product = productService.findByIdProduct(productId);
 

@@ -9,18 +9,8 @@ import com.base.ecommerce.exception.customException.ProductNotFoundException;
 import com.base.ecommerce.model.Product;
 import com.base.ecommerce.model.ProductStatus;
 import com.base.ecommerce.repository.ProductRepository;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.PartitionInfo;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.ElasticsearchClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.client.ClientConfiguration;
-import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Async;
@@ -29,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,15 +33,17 @@ public class ProductService {
     private final ProductDtoConverter productDtoConverter;
     private final ImplUploadService implUploadService;
     private final KafkaTemplate<String, Product> kafkaTemplate;
+    private final AfterLiveProcess afterLiveProcess;
 
 
 
     public ProductService(ProductRepository productRepository, ProductDtoConverter productDtoConverter,
-                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate) {
+                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate, AfterLiveProcess afterLiveProcess) {
         this.productRepository = productRepository;
         this.productDtoConverter = productDtoConverter;
         this.implUploadService = implUploadService;
         this.kafkaTemplate = kafkaTemplate;
+        this.afterLiveProcess = afterLiveProcess;
     }
 
 
@@ -76,12 +69,9 @@ public class ProductService {
                 .updateAt(Objects.requireNonNull(productRequest.getUpdateAt()))
                 .productPrice(Objects.requireNonNull(productRequest.getProductPrice()))
                 .productStatus(status)
+                .buyerId(Objects.requireNonNull(productRequest.getBuyerId()))
                 .build();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-
-        executorService.submit(() -> {
-            try {
                 CompletableFuture.runAsync(() -> {
                     ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
                     future.addCallback(
@@ -89,11 +79,8 @@ public class ProductService {
                             ex -> System.out.println("Unable to send message: " + ex.getMessage())
                     );
                 });
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-                }, executorService);
 
+        CompletableFuture.runAsync(() -> afterLiveProcess.afterLiveProcess(product.getBuyerId()));
         return productDtoConverter.convertToProduct(productRepository.save(product));
 
     }

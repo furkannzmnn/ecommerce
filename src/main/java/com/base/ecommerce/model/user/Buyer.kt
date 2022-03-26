@@ -13,7 +13,8 @@ class Buyer constructor(
     val lastName: String?,
     val phoneNumber: String?,
     val buyerType: BuyerType = BuyerType.NORMAL,
-    val point:Int?
+    val point:Int?,
+    val email: String?,
 
 ){
     data class Builder constructor(
@@ -22,7 +23,8 @@ class Buyer constructor(
         var lastName: String? = null,
         var phoneNumber: String? = null,
         var buyerType: BuyerType = BuyerType.NORMAL,
-        var point: Int? = null
+        var point: Int? = null,
+        var email: String? = null
     ) {
 
         fun id(id: Int) = apply { this.id = id }
@@ -31,8 +33,9 @@ class Buyer constructor(
         fun phoneNumber(phoneNumber: String?) = apply { this.phoneNumber = phoneNumber }
         fun buyerType(buyerType: BuyerType) = apply { this.buyerType = buyerType }
         fun point(point: Int?) = apply { this.point = point }
+        fun email(email: String?) = apply { this.email = email }
 
-        fun build() = Buyer(id,name, lastName, phoneNumber, buyerType,point)
+        fun build() = Buyer(id,name, lastName, phoneNumber, buyerType,point,email)
 
         }
 }

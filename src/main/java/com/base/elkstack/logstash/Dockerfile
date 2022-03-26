@@ -1,4 +1,4 @@
-FROM logstash:6.8.7
+FROM logstash:8.1.1
 
 USER root
 ENV ELASTICSEARCH_HOST "elasticsearch:9200"

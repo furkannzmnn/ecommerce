@@ -4,6 +4,10 @@ services:
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper
 
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -65,6 +69,7 @@ services:
     image: logstash
     ports:
       - "5044:5044"
+
     volumes:
       - $HOME/app:/var/app
     links:
@@ -74,8 +79,12 @@ services:
 
   elasticsearch:
     image: elasticsearch:6.8.7
+    platform: linux/arm64/v8
     environment:
       - discovery.type=single-node
+      - max_open_files=65536
+      - max_content_length_in_bytes=100000000
+      - max_content_lenght = 100000000
     volumes:
       - $HOME/app:/var/app
 
@@ -85,6 +94,8 @@ services:
 
   kibana:
     image: kibana:6.8.7
+    platform: linux/arm64/v8
+
     environment:
       SERVER_NAME: kibana.example.org
       ELASTICSEARCH_URL: http://elasticsearch:9200
@@ -137,6 +148,8 @@ services:
 
   postgresql:
     image: postgres:11.1-alpine
+    platform: linux/amd64
+
     # assign a name to this container
     container_name: postgresql
     volumes:

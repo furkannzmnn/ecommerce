@@ -17,8 +17,6 @@ class User (
     val password: String,
     @Column(name ="enabled")
     var enabled: Boolean,
-    @javax.persistence.Transient
-    val role: List<String>,
     ) {
 
     data class Builder(
@@ -31,7 +29,6 @@ class User (
         var website: String = "",
         var company: String = "",
         var password: String = "",
-        var role: List<String> = listOf(),
         var enabled: Boolean = false
     ) {
         fun id(id: Int) = apply { this.id = id }
@@ -43,8 +40,7 @@ class User (
         fun website(website: String) = apply { this.website = website }
         fun company(company: String) = apply { this.company = company }
         fun password(password: String) = apply { this.password = password }
-        fun role(role: List<String>) = apply { this.role = role }
         fun enabled(enabled: Boolean) = apply { this.enabled = enabled }
-        fun build() = User(id, name, username, email, address, phone, website, company, password, enabled, role)
+        fun build() = User(id, name, username, email, address, phone, website, company, password, enabled)
     }
 }

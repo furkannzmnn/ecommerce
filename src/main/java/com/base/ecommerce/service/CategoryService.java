@@ -55,7 +55,6 @@ public class CategoryService {
                         .data(Map.of("error","category not found"))
                         .build());
 
-        Objects.requireNonNull(category.getId());
         this.categoryRepository.deleteById(category.getId());
     }
 

@@ -23,8 +23,10 @@ class ProductRequest constructor(
     @NotNull
     val productStatus: ProductStatus?,
     @JsonIgnore
-    val favorite: Set<Favorite>?
+    val favorite: Set<Favorite>?,
+    val buyerId: Int?
 ) {
+
     data class Builder(
         var id: Int? = null,
         var productName: String? = null,
@@ -36,7 +38,8 @@ class ProductRequest constructor(
         var category: Category? = null,
         var productImageURL: String? = "",
         var productStatus: ProductStatus? = null,
-        var favorite: Set<Favorite>? = setOf()
+        var favorite: Set<Favorite>? = setOf(),
+        var buyerId: Int? = null
     ){
         fun id(int: Int) = apply { this.id = id }
         fun productName(productName: String) = apply { this.productName = productName }
@@ -49,6 +52,8 @@ class ProductRequest constructor(
         fun category (category: Category) = apply { this.category = category }
         fun productStatus (productStatus: ProductStatus) = apply { this.productStatus = productStatus }
         fun favorite (favorite: Favorite) = apply { this.favorite = setOf(favorite) }
-        fun build() = ProductRequest(id,productName, productTitle, productDesc, creatAt, updateAt, productPrice, category, productImageURL, productStatus, favorite)
+        fun buyerId (buyerId: Int) = apply { this.buyerId = buyerId }
+        fun build() = ProductRequest(id,productName, productTitle, productDesc, creatAt, updateAt,
+                productPrice, category, productImageURL, productStatus, favorite, buyerId)
     }
 }
