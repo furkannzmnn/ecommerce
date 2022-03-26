@@ -4,6 +4,7 @@ import com.base.ecommerce.core.image.ImplUploadService;
 import com.base.ecommerce.dto.ErrorCode;
 import com.base.ecommerce.dto.ProductDto;
 import com.base.ecommerce.dto.converter.ProductDtoConverter;
+import com.base.ecommerce.dto.request.IncrementView;
 import com.base.ecommerce.dto.request.ProductRequest;
 import com.base.ecommerce.exception.customException.ProductNotFoundException;
 import com.base.ecommerce.model.Product;
@@ -33,16 +34,18 @@ public class ProductService {
     private final ImplUploadService implUploadService;
     private final KafkaTemplate<String, Product> kafkaTemplate;
     private final AfterLiveProcess afterLiveProcess;
+    private final ProductViewedCountService countService;
 
 
 
     public ProductService(ProductRepository productRepository, ProductDtoConverter productDtoConverter,
-                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate, AfterLiveProcess afterLiveProcess) {
+                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate, AfterLiveProcess afterLiveProcess, ProductViewedCountService countService) {
         this.productRepository = productRepository;
         this.productDtoConverter = productDtoConverter;
         this.implUploadService = implUploadService;
         this.kafkaTemplate = kafkaTemplate;
         this.afterLiveProcess = afterLiveProcess;
+        this.countService = countService;
     }
 
 
@@ -127,7 +130,12 @@ public class ProductService {
                 );
     }
 
-    public ProductDto getByIdProduct(int id) {
+    public ProductDto getByIdProduct(int id, Long userId) {
+
+        IncrementView incrementView = new IncrementView(userId , id);
+        countService.increaseProductViewedCount(incrementView);
+
+
         return this.productDtoConverter.convertToProduct(
                 findByIdProduct(id)
         );

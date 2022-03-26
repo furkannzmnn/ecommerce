@@ -1,9 +1,12 @@
 package com.base.ecommerce.api;
 
+import com.base.ecommerce.core.utils.ContextAware;
 import com.base.ecommerce.core.utils.ResponseApi;
 import com.base.ecommerce.dto.ProductDto;
 import com.base.ecommerce.dto.request.ProductRequest;
 import com.base.ecommerce.model.ProductStatus;
+import com.base.ecommerce.model.user.User;
+import com.base.ecommerce.repository.UserRepository;
 import com.base.ecommerce.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,9 +76,9 @@ public class ProductController extends BaseRestController{
         );
     }
     @GetMapping("/get-by-id-product/{id}")
-    public ResponseEntity<ProductDto> getByIdProduct(@PathVariable int id){
+    public ResponseEntity<ProductDto> getByIdProduct(@PathVariable int id, Long userId){
         return ResponseEntity.ok(
-                this.productService.getByIdProduct(id)
+                this.productService.getByIdProduct(id, userId)
         );
     }
 

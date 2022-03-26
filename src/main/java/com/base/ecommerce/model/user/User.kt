@@ -6,7 +6,7 @@ import javax.persistence.*
 class User (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long?,
     val name: String,
     val username: String,
     val email: String,
@@ -20,7 +20,7 @@ class User (
     ) {
 
     data class Builder(
-        var id: Int = 0,
+        var id: Long? = 0,
         var name: String = "",
         var username: String = "",
         var email: String = "",
@@ -31,7 +31,7 @@ class User (
         var password: String = "",
         var enabled: Boolean = false
     ) {
-        fun id(id: Int) = apply { this.id = id }
+        fun id(id: Long) = apply { this.id = id }
         fun name(name: String) = apply { this.name = name }
         fun username(username: String) = apply { this.username = username }
         fun email(email: String) = apply { this.email = email }
