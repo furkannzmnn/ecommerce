@@ -1,14 +1,18 @@
 package com.base.ecommerce.service;
 
 import com.base.ecommerce.dto.request.IncrementView;
-import com.base.ecommerce.model.Product;
 import com.base.ecommerce.model.user.User;
 import com.base.ecommerce.repository.ProductRepository;
 import com.base.ecommerce.repository.UserRepository;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaProducerException;
+import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -39,14 +43,27 @@ public class ProductViewedCountService {
         logger.info("Received notification for product viewed count");
         User user = userRepository.findById(incrementView.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        Product product = productRepository.findById(incrementView.getProductId()).orElse(new Product());
-        logger.info("Product viewed count for product " + product.getProductTitle() + " is " + product.getProductName());
         logger.info("User viewed count: " + user.getUsername());
 
     }
 
     public void functionality(IncrementView incrementView) {
-        Consumer<IncrementView> consumer = s ->  kafkaTemplate.send("product-viewed-count", incrementView);
+
+        ListenableFuture<SendResult<String, IncrementView>> future = kafkaTemplate.send("product-viewed-count", incrementView);
+
+        Consumer<IncrementView> consumer = s -> future.addCallback(new KafkaSendCallback<>() {
+            @Override
+            public void onSuccess(SendResult<String, IncrementView> result) {
+                logger.info("Message sent successfully");
+            }
+
+            @Override
+            public void onFailure(final KafkaProducerException e) {
+                ProducerRecord<String, IncrementView> record = e.getFailedProducerRecord();
+                logger.info("Failed to send message: " + record.value());
+
+            }
+        });
         consumer.accept(incrementView);
     }
 }
