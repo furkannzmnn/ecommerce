@@ -22,12 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
 
     private final ProductRepository productRepository;
     private final ProductDtoConverter productDtoConverter;
@@ -60,7 +59,17 @@ public class ProductService {
     public ProductDto addProduct(ProductRequest productRequest, ProductStatus status) {
 
         ProductLiveValidation.isValid(productRequest);
-        final Product product = new Product.Builder()
+        final Product product = buildData(productRequest, status);
+
+        sendKafka(product);
+
+        CompletableFuture.runAsync(() -> afterLiveProcess.afterLiveProcess(product.getBuyerId()));
+        return productDtoConverter.convertToProduct(productRepository.save(product));
+
+    }
+
+    private Product buildData(ProductRequest productRequest, ProductStatus status) {
+        return new Product.Builder()
                 .productTitle(Objects.requireNonNull(productRequest.getProductTitle()))
                 .productDesc(Objects.requireNonNull(productRequest.getProductDesc()))
                 .productName(Objects.requireNonNull(productRequest.getProductName()))
@@ -71,19 +80,18 @@ public class ProductService {
                 .productStatus(status)
                 .buyerId(Objects.requireNonNull(productRequest.getBuyerId()))
                 .build();
-
-                CompletableFuture.runAsync(() -> {
-                    ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
-                    future.addCallback(
-                            result -> System.out.println("Sent message: " + product.getProductName()),
-                            ex -> System.out.println("Unable to send message: " + ex.getMessage())
-                    );
-                });
-
-        CompletableFuture.runAsync(() -> afterLiveProcess.afterLiveProcess(product.getBuyerId()));
-        return productDtoConverter.convertToProduct(productRepository.save(product));
-
     }
+
+    private void sendKafka(Product product) {
+        CompletableFuture.runAsync(() -> {
+            ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
+            future.addCallback(
+                    result -> System.out.println("Sent message: " + product.getProductName()),
+                    ex -> System.out.println("Unable to send message: " + ex.getMessage())
+            );
+        });
+    }
+
 
     public List<ProductDto> getByNameAndCategory(String productName, Long categoryId) {
         return this.productRepository.getByProductNameOrCategory_Id(productName, categoryId)

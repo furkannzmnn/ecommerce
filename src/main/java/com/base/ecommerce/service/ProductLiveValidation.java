@@ -33,7 +33,5 @@ public class ProductLiveValidation {
         if (!errors.isEmpty()) {
             throw GenericException.builder().errorCode(ErrorCode.VALIDATION_EXCEPTION).build();
         }
-
-
     }
 }
