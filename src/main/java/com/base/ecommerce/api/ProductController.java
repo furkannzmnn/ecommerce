@@ -1,12 +1,9 @@
 package com.base.ecommerce.api;
 
-import com.base.ecommerce.core.utils.ContextAware;
 import com.base.ecommerce.core.utils.ResponseApi;
 import com.base.ecommerce.dto.ProductDto;
 import com.base.ecommerce.dto.request.ProductRequest;
 import com.base.ecommerce.model.ProductStatus;
-import com.base.ecommerce.model.user.User;
-import com.base.ecommerce.repository.UserRepository;
 import com.base.ecommerce.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +14,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -43,13 +41,13 @@ public class ProductController extends BaseRestController{
     }
 
     @PostMapping("/add-product")
-    public ResponseEntity<ResponseApi> addProduct(@Valid @RequestBody ProductRequest productRequest, ProductStatus status){
+    public ResponseEntity<ResponseApi> addProduct(@Valid @RequestBody ProductRequest productRequest, ProductStatus status) throws ExecutionException, InterruptedException {
         return ResponseEntity.ok(
                 new ResponseApi.ResponseBuilder()
                         .Message("product created")
                         .StatusCode(201)
                         .HttpStatus(HttpStatus.CREATED)
-                        .Data(Map.of("data" , productService.addProduct(productRequest,status)))
+                        .Data(Map.of("data" , productService.addProduct(productRequest,status).get()))
                         .builder()
         );
     }

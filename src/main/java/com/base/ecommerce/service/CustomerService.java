@@ -22,7 +22,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer createCustomer(Customer customer){
+        public Customer createCustomer(Customer customer){
 
         BigDecimal customerCommission = CustomerCommissionFlow
                 .valueOf(customer.getCustomerType().name())

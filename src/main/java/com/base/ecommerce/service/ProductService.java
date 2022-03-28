@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
-
     private final ProductRepository productRepository;
     private final ProductDtoConverter productDtoConverter;
     private final ImplUploadService implUploadService;
@@ -36,10 +35,9 @@ public class ProductService {
     private final AfterLiveProcess afterLiveProcess;
     private final ProductViewedCountService countService;
 
-
-
     public ProductService(ProductRepository productRepository, ProductDtoConverter productDtoConverter,
-                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate, AfterLiveProcess afterLiveProcess, ProductViewedCountService countService) {
+                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate,
+                          AfterLiveProcess afterLiveProcess, ProductViewedCountService countService) {
         this.productRepository = productRepository;
         this.productDtoConverter = productDtoConverter;
         this.implUploadService = implUploadService;
@@ -58,8 +56,9 @@ public class ProductService {
 
 
 
+    @Async
     @Transactional
-    public ProductDto addProduct(ProductRequest productRequest, ProductStatus status) {
+    public CompletableFuture<ProductDto> addProduct(ProductRequest productRequest, ProductStatus status) {
 
         ProductLiveValidation.isValid(productRequest);
         final Product product = buildData(productRequest, status);
@@ -67,7 +66,7 @@ public class ProductService {
         sendKafka(product);
 
         CompletableFuture.runAsync(() -> afterLiveProcess.afterLiveProcess(product.getBuyerId()));
-        return productDtoConverter.convertToProduct(productRepository.save(product));
+        return CompletableFuture.completedFuture(productDtoConverter.convertToProduct(productRepository.save(product)));
 
     }
 
@@ -90,7 +89,7 @@ public class ProductService {
             ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
             future.addCallback(
                     result -> System.out.println("Sent message: " + product.getProductName()),
-                    ex -> System.out.println("Unable to send message: " + ex.getMessage())
+                    ex ->     System.out.println("Unable to send message: " + ex.getMessage())
             );
         });
     }
@@ -146,7 +145,6 @@ public class ProductService {
         this.productRepository.deleteById(Objects.requireNonNull(product.getId()));
     }
 
-    @Async
     @Transactional
     public void saveAll(List<Product> products){
         productRepository.saveAll(products);

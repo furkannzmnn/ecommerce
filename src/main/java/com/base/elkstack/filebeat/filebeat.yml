@@ -5,7 +5,6 @@ filebeat.inputs:
       ids:
         - "*"
 
-
 processors:
   - add_docker_metadata:
       host: "unix:///var/run/docker.sock"

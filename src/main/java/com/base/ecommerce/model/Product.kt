@@ -29,16 +29,15 @@ class Product constructor (
 
     var isActive:Boolean? = true,
 
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "category_id")
     val category: Category?= null,
 
-
     @field:Enumerated(EnumType.STRING)
     var productStatus: ProductStatus? = null,
 
-    val productTimeExpired: LocalDateTime? = null,
+    var productTimeExpired: LocalDateTime? = null,
+
     var buyerId: Int? = null,
 
 ) {

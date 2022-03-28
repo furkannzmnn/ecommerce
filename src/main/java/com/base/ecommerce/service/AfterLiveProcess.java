@@ -19,8 +19,6 @@ public class AfterLiveProcess {
         this.mailService = mailService;
     }
 
-
-
     public void afterLiveProcess(Integer buyerId) {
 
         Buyer buyer = buyerRepository.findById(buyerId).orElse(new Buyer());

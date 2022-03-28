@@ -1,7 +1,6 @@
 package com.base.ecommerce.core.image;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,8 +55,8 @@ public class ImplUploadService implements UploadService {
     public List<String> uploadMultipleImage(MultipartFile[] multipartFiles) {
         StringBuilder sb = new StringBuilder();
 
-        Consumer<StringBuilder> consumer = s -> Arrays.stream(multipartFiles).forEach(multipartFile ->
-                s.append(multipartFile.getOriginalFilename()).append(IMAGE_SPLIT_PREFIX));
+
+        Consumer<StringBuilder> consumer = s -> Arrays.stream(multipartFiles).forEach(mp -> s.append(upload(mp)).append(IMAGE_SPLIT_PREFIX));
 
         consumer.accept(sb);
 
@@ -66,24 +65,6 @@ public class ImplUploadService implements UploadService {
         return Arrays.stream(split).collect(Collectors.toList());
 
 
-    }
-
-    private ApiResponse createFolderForApi() {
-        try {
-           return cloudinary.api().createFolder("/kullanatnoktacom", ObjectUtils.emptyMap());
-        } catch (Exception e) {
-            LOGGER.log(java.util.logging.Level.SEVERE, "Error in upload image", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String downloadArchive() {
-        try {
-            return cloudinary.downloadFolder("/kullanatnoktacom", ObjectUtils.emptyMap());
-        } catch (Exception e) {
-            LOGGER.log(java.util.logging.Level.SEVERE, "Error in upload image", e);
-            throw new RuntimeException(e);
-        }
     }
 
 
