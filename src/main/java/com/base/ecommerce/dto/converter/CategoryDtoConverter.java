@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryDtoConverter {
-
     public CategoryDto convertToCategory(Category from){
         return new CategoryDto(
                from.getId(),

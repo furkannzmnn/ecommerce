@@ -12,6 +12,7 @@ import com.base.ecommerce.repository.FavoriteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class FavoriteService {
 
     }
 
+    @CacheEvict(cacheNames = "favoriteSaveRequest", allEntries = true)
     public FavoriteDto addFavoriteProduct(FavoriteSaveRequest favoriteSaveRequest) {
 
         final Optional<Favorite> favoriteOptional = favoriteRepository.findByUserIdAndProductId(favoriteSaveRequest.getUserId(), favoriteSaveRequest.getProductId());
@@ -56,7 +58,7 @@ public class FavoriteService {
 
     }
 
-    @Cacheable(cacheNames = "favorite")
+    @Cacheable(cacheNames = "favoriteSaveRequest")
     public List<?> getFavorite() {
 
         final List<FavoriteDto> list = this.favoriteRepository.findAll()

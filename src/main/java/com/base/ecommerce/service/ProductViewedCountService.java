@@ -43,7 +43,6 @@ public class ProductViewedCountService {
         logger.info("Received notification for product viewed count");
         User user = userRepository.findById(incrementView.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-
         logger.info("User viewed count: " + user.getUsername());
 
     }

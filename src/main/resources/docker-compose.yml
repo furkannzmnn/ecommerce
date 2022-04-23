@@ -85,8 +85,7 @@ services:
       - discovery.type=single-node
       - max_open_files=65536
       - max_content_length_in_bytes=100000000
-      - max_content_lenght = 100000000
-      - transport.host= elasticsearch
+      - transport.host=elasticsearch
     volumes:
       - $HOME/app:/var/app
 

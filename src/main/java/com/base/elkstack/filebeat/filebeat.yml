@@ -3,7 +3,7 @@ filebeat.inputs:
     enabled: true
     containers:
       ids:
-        - "*"
+        - "16c236d3ab388111ea935f771ecc93c587ccaf6f94511efbb6ab3f6296f91994"
 
 processors:
   - add_docker_metadata:

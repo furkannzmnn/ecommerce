@@ -10,6 +10,8 @@ import com.base.ecommerce.exception.customException.ProductNotFoundException;
 import com.base.ecommerce.model.Product;
 import com.base.ecommerce.model.ProductStatus;
 import com.base.ecommerce.repository.ProductRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,12 +30,14 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
+    private static final Logger LOGGER = LogManager.getLogger(ProductService.class);
+
     private final ProductRepository productRepository;
     private final ProductDtoConverter productDtoConverter;
     private final ImplUploadService implUploadService;
-    private final KafkaTemplate<String, Product> kafkaTemplate;
     private final AfterLiveProcess afterLiveProcess;
     private final ProductViewedCountService countService;
+    private final KafkaTemplate<String, Product> kafkaTemplate;
 
     public ProductService(ProductRepository productRepository, ProductDtoConverter productDtoConverter,
                           ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate,
@@ -53,7 +57,6 @@ public class ProductService {
                 .map(productDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
-
 
 
     @Async
@@ -164,8 +167,4 @@ public class ProductService {
     public List<String> uploadAlbums(MultipartFile[] multipartFiles) {
         return implUploadService.uploadMultipleImage(multipartFiles);
     }
-
-
-
-
 }

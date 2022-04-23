@@ -20,6 +20,7 @@ public class ExecuteJobRunner implements Runnable {
 
         baseJob.execute(job.getParams());
 
+
         final JobInstance jobInstance = ContextAware.getBean(JobInstance.class);
         jobInstance.save(job);
     }

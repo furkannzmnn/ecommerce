@@ -7,8 +7,7 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class GenericException extends RuntimeException {
+public final class GenericException extends RuntimeException {
 
 
     private final String message;

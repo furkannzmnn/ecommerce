@@ -30,11 +30,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-
-
         final Optional<User> user = userRepository.findByUsername(username);
 
-        if(true){ // check docker created db
+        if(user.isPresent()){
             logger.info("User: {} authenticated successfully", username);
             return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
         }

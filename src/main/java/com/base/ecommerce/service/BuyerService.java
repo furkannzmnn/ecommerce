@@ -58,9 +58,7 @@ public class BuyerService {
         final Buyer fromDb = buyerRepository.findById(id).orElseThrow(
                 () ->   new RuntimeException("id not found")
         );
-
-
-            return new BuyerCreateDto.Builder()
+        return new BuyerCreateDto.Builder()
                     .id(fromDb.getId())
                     .data(Map.of("type",fromDb.getBuyerType()))
                     .build();
