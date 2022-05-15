@@ -13,7 +13,10 @@ public class StringUtils {
     }
 
     public static boolean isEmpty(String value) {
-        return value.length() == 0 && value.trim().isEmpty();
+        if (value == null) {
+            return false;
+        }
+        return value.length() == 0 || value.trim().isEmpty();
     }
 
     public static boolean isNotEmpty(String value) {
@@ -35,10 +38,6 @@ public class StringUtils {
 
     public static boolean isRoman(String value) {
         return value.matches("^[IVXLCDM]+$");
-    }
-
-    public static boolean isArabic(String value) {
-        return value.matches("^[0-9]+$");
     }
     public static boolean isNumber(String value) {
         return value.matches("^[0-9]+$");

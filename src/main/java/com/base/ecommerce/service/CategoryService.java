@@ -1,5 +1,6 @@
 package com.base.ecommerce.service;
 
+import com.base.ecommerce.core.utils.StringUtils;
 import com.base.ecommerce.dto.CategoryDto;
 import com.base.ecommerce.dto.ErrorCode;
 import com.base.ecommerce.dto.converter.CategoryDtoConverter;
@@ -39,7 +40,7 @@ public class CategoryService {
 
     public CategoryDto addCategory(Category category){
 
-         if(category.getProduct() == null || Objects.requireNonNull(category.getCategoryName()).isEmpty()){
+         if(category.getProduct() == null || StringUtils.isEmpty(category.getCategoryName())){
             throw new CategoryInvalidException(CATEGORY_INVALID);
         }
         return categoryDtoConverter.convertToCategory(
@@ -55,7 +56,7 @@ public class CategoryService {
                         .data(Map.of("error","category not found"))
                         .build());
 
-        this.categoryRepository.deleteById(category.getId());
+        this.categoryRepository.deleteById(Objects.requireNonNull(category.getId()));
     }
 
 }

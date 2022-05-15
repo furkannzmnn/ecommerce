@@ -24,7 +24,7 @@ public class ProductLiveValidation {
         tuple.put(3, product.getProductTitle());
         tuple.put(4, product.getProductImageURL());
 
-        tuple.values().stream().filter(Objects::nonNull)
+        tuple.values().stream()
                 .filter(StringUtils::isEmpty)
                 .findFirst()
                 .ifPresent(error -> errors.put(error, "Required"));

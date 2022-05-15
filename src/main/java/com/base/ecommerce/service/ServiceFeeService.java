@@ -30,6 +30,7 @@ public class ServiceFeeService {
                 .typeCheckForServiceFee(product.getProductPrice());
         try {
             String[] strings = objectMapper.writeValueAsString(product).split(",");
+            logger.info("Received Product: " + product.toString());
             logger.info("Received Product: {}", Arrays.stream(strings).map(s -> s + "\n").reduce("", String::concat));
         } catch (Exception e) {
             logger.error("ServiceFeeService: Exception = {}", e.getMessage());

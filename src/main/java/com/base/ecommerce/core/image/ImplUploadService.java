@@ -24,17 +24,17 @@ public class ImplUploadService implements UploadService {
     private static final Logger LOGGER = Logger.getLogger(ImplUploadService.class.getName());
 
 
-    public ImplUploadService(Cloudinary cloudinary) {
+    public ImplUploadService(final Cloudinary cloudinary) {
         this.cloudinary = cloudinary;
     }
 
     @Override
-    public String upload(MultipartFile multipartFile) {
+    public String upload(final MultipartFile multipartFile) {
 
 
         try {
-            File file = convert(multipartFile);
-            Map<?, ?> uploadResult = this.cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            final File file = convert(multipartFile);
+            final Map<?, ?> uploadResult = this.cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
             return uploadResult.get("url").toString();
         } catch (Exception e) {
             LOGGER.log(java.util.logging.Level.SEVERE, "Error in upload image", e);
@@ -42,7 +42,7 @@ public class ImplUploadService implements UploadService {
         }
     }
 
-    private File convert(MultipartFile multipartFile) throws IOException {
+    private File convert(final MultipartFile multipartFile) throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         FileOutputStream stream = new FileOutputStream(file);
         byte[] bytes = multipartFile.getBytes();
@@ -52,18 +52,18 @@ public class ImplUploadService implements UploadService {
     }
 
     // this method returning list of url of images
-    public List<String> uploadMultipleImage(MultipartFile[] multipartFiles) {
-        StringBuilder sb = new StringBuilder();
+    public final List<String> uploadMultipleImage(final MultipartFile[] multipartFiles) {
+        final StringBuilder sb = new StringBuilder();
 
-
-        Consumer<StringBuilder> consumer = s -> Arrays.stream(multipartFiles).forEach(mp -> s.append(upload(mp)).append(IMAGE_SPLIT_PREFIX));
+        final Consumer<StringBuilder> consumer = s -> Arrays
+                .stream(multipartFiles)
+                .forEach(mp -> s.append(upload(mp)).append(IMAGE_SPLIT_PREFIX));
 
         consumer.accept(sb);
 
         final String[] split = sb.toString().split(IMAGE_SPLIT_PREFIX);
 
         return Arrays.stream(split).collect(Collectors.toList());
-
 
     }
 

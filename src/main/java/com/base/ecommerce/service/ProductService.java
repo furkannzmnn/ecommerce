@@ -91,8 +91,8 @@ public class ProductService {
         CompletableFuture.runAsync(() -> {
             ListenableFuture<SendResult<String, Product>> future = kafkaTemplate.send("product", product);
             future.addCallback(
-                    result -> System.out.println("Sent message: " + product.getProductName()),
-                    ex ->     System.out.println("Unable to send message: " + ex.getMessage())
+                    result -> LOGGER.info("Sent message: " + product.getProductName()),
+                    ex ->     LOGGER.info("Unable to send message: " + ex.getMessage())
             );
         });
     }

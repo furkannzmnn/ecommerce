@@ -71,7 +71,7 @@ public class FavoriteService {
                 .collect(Collectors.toList());
     }
 
-    protected void deleteById(int id) {
+    public void deleteById(int id) {
         if (favoriteRepository.existsById(id))
             favoriteRepository.deleteById(id);
         else

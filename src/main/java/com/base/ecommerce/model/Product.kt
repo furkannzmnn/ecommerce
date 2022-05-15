@@ -40,6 +40,8 @@ class Product constructor (
 
     var buyerId: Int? = null,
 
+
+
 ) {
     data class Builder constructor(
         var id: Int? = null,
@@ -71,5 +73,9 @@ class Product constructor (
         fun productTimeExpired(productTimeExpired: LocalDateTime) = apply { this.productTimeExpired = productTimeExpired }
         fun build() = Product(id,productName, productTitle, productDesc, productPrice, creatAt, updateAt, productImageURL,
             isActive, category, productStatus,  productTimeExpired, buyerId)
+    }
+
+    override fun toString(): String {
+        return "Product(id=$id, productName=$productName, productTitle=$productTitle, productDesc=$productDesc, productPrice=$productPrice, creatAt=$creatAt, updateAt=$updateAt, productImageURL=$productImageURL, isActive=$isActive, category=$category, productStatus=$productStatus, productTimeExpired=$productTimeExpired, buyerId=$buyerId)"
     }
 }
