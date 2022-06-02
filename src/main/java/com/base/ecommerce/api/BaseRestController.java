@@ -1,8 +1,8 @@
 package com.base.ecommerce.api;
 
 import com.base.ecommerce.exception.GenericException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class BaseRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseRestController.class);
+    private static final Logger logger = LogManager.getLogger(BaseRestController.class);
+
 
     private final MappingJackson2JsonView view = new MappingJackson2JsonView();
 

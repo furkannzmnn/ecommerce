@@ -11,13 +11,9 @@ public class BuyerPremiumFlow implements IBuyerFlowType{
 
     @Override
     public Buyer calculatePoint() {
-            int count = FIRST_POINT;
-
-            Buyer from = new Buyer.Builder()
+        return new Buyer.Builder()
                     .buyerType(BuyerType.PREMIUM)
-                    .point(count)
+                    .point(FIRST_POINT)
                     .build();
-
-            return from;
     }
 }

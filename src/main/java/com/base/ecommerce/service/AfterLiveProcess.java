@@ -6,8 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Consumer;
+
 @Component
 public class AfterLiveProcess {
+
+    private boolean isSuccess = true;
 
     private static final Logger logger  = LogManager.getLogger(AfterLiveProcess.class);
 
@@ -19,14 +23,22 @@ public class AfterLiveProcess {
         this.mailService = mailService;
     }
 
-    public void afterLiveProcess(Integer buyerId) {
+    public AfterLiveProcess afterLiveProcess(Integer buyerId) {
 
         Buyer buyer = buyerRepository.findById(buyerId).orElse(new Buyer());
 
         try {
             mailService.sendGenericMessage(buyer.getEmail(), "Welcome to Ecommerce", "your advertisement has been live");
         }catch (Exception e) {
-            logger.error("Error while sending email", e);
+            isSuccess = false;
+        }
+        return this;
+    }
+
+    public void failureHandler(Consumer<String> consumer) {
+        if(!isSuccess) {
+            consumer.accept("Error Occurred");
+            logger.error("action failed");
         }
     }
 }

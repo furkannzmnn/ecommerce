@@ -58,7 +58,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-
     @Async
     @Transactional
     public CompletableFuture<ProductDto> addProduct(ProductRequest productRequest, ProductStatus status) {
@@ -68,20 +67,22 @@ public class ProductService {
 
         sendKafka(product);
 
-        CompletableFuture.runAsync(() -> afterLiveProcess.afterLiveProcess(product.getBuyerId()));
+        CompletableFuture.runAsync(() ->
+                afterLiveProcess.afterLiveProcess(product.getBuyerId())
+                        .failureHandler(e -> LOGGER.error("Error while processing after live process {}", e)));
         return CompletableFuture.completedFuture(productDtoConverter.convertToProduct(productRepository.save(product)));
 
     }
 
     private Product buildData(ProductRequest productRequest, ProductStatus status) {
         return new Product.Builder()
-                .productTitle(Objects.requireNonNull(productRequest.getProductTitle()))
-                .productDesc(Objects.requireNonNull(productRequest.getProductDesc()))
-                .productName(Objects.requireNonNull(productRequest.getProductName()))
-                .category(Objects.requireNonNull(productRequest.getCategory()))
-                .creatAt(Objects.requireNonNull(productRequest.getCreatAt()))
-                .updateAt(Objects.requireNonNull(productRequest.getUpdateAt()))
-                .productPrice(Objects.requireNonNull(productRequest.getProductPrice()))
+                .productTitle(productRequest.getProductTitle())
+                .productDesc(productRequest.getProductDesc())
+                .productName(productRequest.getProductName())
+                .category(productRequest.getCategory())
+                .creatAt(productRequest.getCreatAt())
+                .updateAt(productRequest.getUpdateAt())
+                .productPrice(productRequest.getProductPrice())
                 .productStatus(status)
                 .buyerId(Objects.requireNonNull(productRequest.getBuyerId()))
                 .build();

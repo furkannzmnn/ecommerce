@@ -35,7 +35,7 @@ public class UserDetailService implements org.springframework.security.core.user
          return new User(
                  user.getUsername(),
                  user.getPassword(),
-                 enabled, accountNonExpired, credentialsNonExpired, accountNonLocked,new ArrayList<>());
+                 enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, grantedAuthorities(List.of()));
 
     }
     private static List<GrantedAuthority> grantedAuthorities (List<String> roles) {

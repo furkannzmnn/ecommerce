@@ -8,6 +8,8 @@ import com.base.ecommerce.exception.GenericException;
 import com.base.ecommerce.exception.customException.CategoryInvalidException;
 import com.base.ecommerce.model.Category;
 import com.base.ecommerce.repository.CategoryRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
+
+    private static final Logger LOGGER = LogManager.getLogger(ProductService.class);
 
     private final CategoryRepository categoryRepository;
     private final CategoryDtoConverter categoryDtoConverter;
@@ -43,9 +47,14 @@ public class CategoryService {
          if(category.getProduct() == null || StringUtils.isEmpty(category.getCategoryName())){
             throw new CategoryInvalidException(CATEGORY_INVALID);
         }
+
+        LOGGER.info("Category created successfully");
+        LOGGER.info("Category name: {}", category.getCategoryName());
+        LOGGER.info("Category id: {}", category.getId());
         return categoryDtoConverter.convertToCategory(
                 categoryRepository.save(category)
         );
+
     }
 
     public void deleteProductData(Long id){

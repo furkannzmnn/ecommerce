@@ -5,6 +5,8 @@ import com.base.ecommerce.job.futureJob.BaseJob;
 import com.base.ecommerce.job.futureJob.JobInstance;
 import com.base.ecommerce.job.futureJob.model.Job;
 
+import java.util.Map;
+
 public class ExecuteJobRunner implements Runnable {
 
     private final Job job;
@@ -19,7 +21,6 @@ public class ExecuteJobRunner implements Runnable {
         final BaseJob baseJob = (BaseJob) ContextAware.getBean(job.getServiceName().toString());
 
         baseJob.execute(job.getParams());
-
 
         final JobInstance jobInstance = ContextAware.getBean(JobInstance.class);
         jobInstance.save(job);

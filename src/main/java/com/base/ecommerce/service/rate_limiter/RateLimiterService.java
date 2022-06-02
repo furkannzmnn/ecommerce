@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RateLimiterService {
 
-    private int hitCount = 0;
+    private long hitCount = 0;
     public static final String RATE_LIMITER_KEY = "rate_limiter_key_";
 
     private final UserRepository userRepository;
@@ -28,7 +28,7 @@ public class RateLimiterService {
             @Cacheable(value = RATE_LIMITER_KEY, key = "#userId"),
             @Cacheable(value = RATE_LIMITER_KEY, key = "#hitCount")
     })
-    public int getHitCount(Long userId, int hitCount) {
+    public long getHitCount(Long userId, long hitCount) {
         return hitCount;
     }
 
@@ -36,20 +36,25 @@ public class RateLimiterService {
             @CachePut(value = RATE_LIMITER_KEY, key = "#userId"),
             @CachePut(value = RATE_LIMITER_KEY, key = "#hitCount")
     })
-    public void incrementHitCount(Long userId, int hitCount) {
+    public void incrementHitCount(Long userId, long hitCount) {
         this.hitCount++;
     }
 
 
     public void getHttpStatus() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getPrincipal().toString()).orElse(null);
+        final User user = getUser();
         if (user != null) {
             if (getHitCount(user.getId(), hitCount) > 10) {
-                throw  GenericException.builder().message("Rate limit exceeded").status(HttpStatus.TOO_MANY_REQUESTS).build();
+                throw GenericException.builder().message("Rate limit exceeded").status(HttpStatus.TOO_MANY_REQUESTS).build();
             }
             incrementHitCount(user.getId(), hitCount);
         }
+    }
+
+    @Cacheable(value = "authentication")
+    public User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName()).orElse(null);
     }
 }
 

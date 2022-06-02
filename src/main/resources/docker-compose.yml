@@ -69,6 +69,9 @@ services:
     ports:
       - "5044:5044"
 
+    environment:
+      - xpack.monitoring.enabled=true
+
     networks:
       - elk
     volumes:
@@ -78,9 +81,11 @@ services:
 
   elasticsearch:
     image: elasticsearch:6.8.7
-    platform: linux/x86_64
+
     environment:
       - discovery.type=single-node
+      - validate_after_inactivity=0
+
       - max_open_files=65536
       - max_content_length_in_bytes=100000000
       - transport.host=elasticsearch

@@ -42,6 +42,12 @@
     <AppenderRef ref="FileAppender" />
 </Root>
 </Loggers>
-
+    <categories>
+        <category name="com.base.kullanatnoktacom" >
+            <priority value="error" />
+            <AppenderRef ref="FileAppender" />
+            <AppenderRef ref="ConsoleAppender" />
+        </category>
+    </categories>
 
 </Configuration>

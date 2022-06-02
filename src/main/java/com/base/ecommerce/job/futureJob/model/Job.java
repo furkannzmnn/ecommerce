@@ -58,6 +58,14 @@ public class Job {
         return new Builder();
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
+
     public static final class Builder {
         private Long id;
         private String jobName;

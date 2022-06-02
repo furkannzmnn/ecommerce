@@ -2,10 +2,12 @@ package com.base.ecommerce.service;
 
 import com.base.ecommerce.model.Product;
 import com.base.ecommerce.service.payment.PaymentFlowProcess;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+@Component
 public class BiddingService {
 
     private final ProductService productService;
@@ -21,10 +23,11 @@ public class BiddingService {
 
         PaymentFlowProcess process = new PaymentFlowProcess(product).startPaymentFlowProcess();
 
-        assert process != null;
-        Mono<Map<String, Object>> mono = Mono.just(process.getFailurePaymentFlowProcess());
+        process.getSuccessPaymentFlowProcess().forEach((e,k) ->  System.out.println(e + " " + k));
 
-        mono.subscribe(System.out::println);
+
+        // bir takım business logicler.....
+
 
         return this;
 

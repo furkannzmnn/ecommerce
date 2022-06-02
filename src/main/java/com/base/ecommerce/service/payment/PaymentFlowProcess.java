@@ -3,7 +3,10 @@ package com.base.ecommerce.service.payment;
 import com.base.ecommerce.model.Product;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class PaymentFlowProcess {
@@ -13,13 +16,13 @@ public final class PaymentFlowProcess {
     public static final String PAYMENT_FLOW_PROCESS_ID = "paymentFlowProcessId";
 
     private final Product product;
-    private final Map<String, Object> successPaymentFlowProcess;
-    private final Map<String, Object> failurePaymentFlowProcess;
+    private final Map<String, Object> successPaymentFlowProcess = new LinkedHashMap<>();
+    private final Map<String, Object> failurePaymentFlowProcess = new LinkedHashMap<>();
 
 
     public PaymentFlowProcess startPaymentFlowProcess() {
         if (this.product != null) {
-            boolean isAfter = product.getProductTimeExpired().isAfter(LocalDateTime.now());
+            boolean isAfter = Objects.requireNonNull(product.getProductTimeExpired()).isAfter(LocalDateTime.now());
             if (isAfter) {
                 product.setProductTimeExpired(LocalDateTime.now().plusMinutes(5));
                 failurePaymentFlowProcess.put("timeExpired", product.getId());
@@ -34,15 +37,11 @@ public final class PaymentFlowProcess {
 
     public PaymentFlowProcess() {
         this.product = null;
-        this.successPaymentFlowProcess = null;
-        this.failurePaymentFlowProcess = null;
     }
 
 
     public PaymentFlowProcess(Product product) {
         this.product = product;
-        this.successPaymentFlowProcess = null;
-        this.failurePaymentFlowProcess = null;
     }
 
     public Map<String, Object> getSuccessPaymentFlowProcess() {

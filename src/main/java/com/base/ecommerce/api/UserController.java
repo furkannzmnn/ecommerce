@@ -5,7 +5,6 @@ import com.base.ecommerce.dto.UserDto;
 import com.base.ecommerce.dto.request.UserSaveRequest;
 import com.base.ecommerce.model.user.User;
 import com.base.ecommerce.model.user.VerificationToken;
-import com.base.ecommerce.security.OnRegistrationCompleteEvent;
 import com.base.ecommerce.service.registiration.UserSaveService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +32,6 @@ public class UserController extends BaseRestController{
     public ResponseEntity<ResponseApi> register(@RequestBody UserSaveRequest user, HttpServletRequest request) {
 
         UserDto userDto = userSaveService.register(user);
-
-        User fromDb = new User.Builder().email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .name(userDto.getName())
-                .username(userDto.getUserName()).build();
-        String appUrl = request.getContextPath();
-
-        publisher.publishEvent(new OnRegistrationCompleteEvent(fromDb, request.getLocale(), appUrl));
 
         return ResponseEntity.ok(new ResponseApi
                 .ResponseBuilder()

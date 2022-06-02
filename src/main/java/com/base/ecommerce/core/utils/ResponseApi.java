@@ -9,7 +9,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseApi {
 
-    protected LocalDateTime timesTampt;
+    protected LocalDateTime timestamp;
     protected String message;
     protected String developerMessage;
     protected int statusCode;
@@ -36,8 +36,8 @@ public class ResponseApi {
         return data;
     }
 
-    public ResponseApi(LocalDateTime timesTampt, String message, String developerMessage, int statusCode, HttpStatus httpStatus, Map<?, ?> data) {
-        this.timesTampt = timesTampt;
+    public ResponseApi(LocalDateTime timestamp, String message, String developerMessage, int statusCode, HttpStatus httpStatus, Map<?, ?> data) {
+        this.timestamp = timestamp;
         this.message = message;
         this.developerMessage = developerMessage;
         this.statusCode = statusCode;
@@ -46,7 +46,7 @@ public class ResponseApi {
     }
 
     public ResponseApi(ResponseBuilder responseBuilder) {
-        this.timesTampt=responseBuilder.timesTampt;
+        this.timestamp =responseBuilder.timesTampt;
         this.message = responseBuilder.message;
         this.developerMessage = responseBuilder.developerMessage;
         this.statusCode = responseBuilder.statusCode;
@@ -116,22 +116,6 @@ public class ResponseApi {
         public String getMessage() {
             return message;
         }
-
-        public String getDeveloperMessage() {
-            return developerMessage;
-        }
-
-        public int getStatusCode() {
-            return statusCode;
-        }
-
-        public HttpStatus getHttpStatus() {
-            return httpStatus;
-        }
-
-        public Map<?, ?> getData() {
-            return data;
         }
     }
 
-}

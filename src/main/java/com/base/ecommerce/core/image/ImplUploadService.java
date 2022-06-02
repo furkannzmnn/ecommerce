@@ -30,8 +30,6 @@ public class ImplUploadService implements UploadService {
 
     @Override
     public String upload(final MultipartFile multipartFile) {
-
-
         try {
             final File file = convert(multipartFile);
             final Map<?, ?> uploadResult = this.cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
@@ -43,12 +41,13 @@ public class ImplUploadService implements UploadService {
     }
 
     private File convert(final MultipartFile multipartFile) throws IOException {
-        File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        FileOutputStream stream = new FileOutputStream(file);
-        byte[] bytes = multipartFile.getBytes();
-        stream.write(bytes);
-        stream.close();
-        return file;
+        final File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        try(final FileOutputStream stream = new FileOutputStream(file)) {
+            byte[] bytes = multipartFile.getBytes();
+            stream.write(bytes);
+            stream.flush();
+            return file;
+        }
     }
 
     // this method returning list of url of images

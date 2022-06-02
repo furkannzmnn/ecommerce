@@ -11,14 +11,10 @@ public class BuyerNormalFlow implements IBuyerFlowType {
 
     @Override
     public Buyer calculatePoint() {
-        int count = FIRST_POINT;
-
-        Buyer from = new Buyer.Builder()
+        return new Buyer.Builder()
                 .buyerType(BuyerType.NORMAL)
-                .point(count)
+                .point(FIRST_POINT)
                 .build();
-
-        return from;
     }
 
 }

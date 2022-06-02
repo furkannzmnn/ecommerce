@@ -6,13 +6,12 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
 
 public class StopWordFilter implements Filter {
 
+    static final String[] stopWords = new String[9];
     private final Logger logger = LoggerFactory.getLogger(StopWordFilter.class);
-    private final Set<String> stopWords = getStopWords();
 
 
     public StopWordFilter() {
@@ -29,7 +28,7 @@ public class StopWordFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestURI = httpRequest.getRequestURI();
 
-        if (stopWords.stream().anyMatch(requestURI::contains)) {
+        if (Arrays.stream(getStopWords()).anyMatch(requestURI::contains)) {
             logger.info("StopWordFilter: {}", requestURI);
             response.getWriter().println("YOUR ACCESS IS DENIED");
         } else {
@@ -42,26 +41,19 @@ public class StopWordFilter implements Filter {
         logger.info("StopWordFilter destroy");
     }
 
-    private Set<String> getStopWords() {
-        Set<String> stopWords = new HashSet<>();
-        stopWords.add("/xss");
-        stopWords.add("/sql");
-        stopWords.add("/robots.txt");
-        stopWords.add("/password");
-        stopWords.add("/hacked");
-        stopWords.add("/jni");
-        stopWords.add("/inject");
-        stopWords.add("/drop-table");
-        stopWords.add("/drop-database");
-        stopWords.add("/drop-column");
-        stopWords.add("/drop-index");
-        stopWords.add("/drop-view");
-        stopWords.add("/drop-procedure");
-        stopWords.add("/drop-function");
-        stopWords.add("/drop-trigger");
-        stopWords.add("/drop-user");
-        stopWords.add("/drop-role");
-        stopWords.add("/drop-schema");
+    private String[] getStopWords() {
         return stopWords;
+    }
+
+    static {
+        stopWords[0] = "/xss";
+        stopWords[1] = "/drop-index";
+        stopWords[2] = "/drop-view";
+        stopWords[3] = "/drop-procedure";
+        stopWords[4] = "/drop-function";
+        stopWords[5] = "/drop-trigger";
+        stopWords[6] = "/drop-user";
+        stopWords[7] = "/drop-role";
+        stopWords[8] = "/drop-schema";
     }
 }
