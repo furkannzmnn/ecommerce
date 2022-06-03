@@ -21,13 +21,10 @@ import java.util.logging.Logger;
 public class ProductViewedCountService {
 
     private static final Logger logger = Logger.getLogger(ProductViewedCountService.class.getName());
-
-    private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final  KafkaTemplate<String, IncrementView> kafkaTemplate;
 
-    public ProductViewedCountService(ProductRepository productRepository, UserRepository userRepository, KafkaTemplate<String, IncrementView> kafkaTemplate) {
-        this.productRepository = productRepository;
+    public ProductViewedCountService(UserRepository userRepository, KafkaTemplate<String, IncrementView> kafkaTemplate) {
         this.userRepository = userRepository;
         this.kafkaTemplate = kafkaTemplate;
     }

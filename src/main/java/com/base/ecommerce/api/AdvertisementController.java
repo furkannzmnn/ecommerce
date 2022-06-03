@@ -32,7 +32,7 @@ public class AdvertisementController extends BaseRestController{
                         .HttpStatus(HttpStatus.OK)
                         .StatusCode(200)
                         .DeveloperMessage("ADVERTISEMENT IS ACTIVE = FALSE")
-                        .Data(Map.of("data", advertisementService.IsTheProductSold(request)))
+                        .Data(Map.of("data", advertisementService.isTheProductSold(request)))
                         .builder()
         );
     }

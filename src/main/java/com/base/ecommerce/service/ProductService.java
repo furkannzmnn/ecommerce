@@ -33,17 +33,15 @@ public class ProductService {
     private static final Logger LOGGER = LogManager.getLogger(ProductService.class);
 
     private final ProductRepository productRepository;
-    private final ProductDtoConverter productDtoConverter;
     private final ImplUploadService implUploadService;
     private final AfterLiveProcess afterLiveProcess;
     private final ProductViewedCountService countService;
     private final KafkaTemplate<String, Product> kafkaTemplate;
 
-    public ProductService(ProductRepository productRepository, ProductDtoConverter productDtoConverter,
-                          ImplUploadService implUploadService, KafkaTemplate<String, Product> kafkaTemplate,
+    public ProductService(ProductRepository productRepository, ImplUploadService implUploadService,
+                          KafkaTemplate<String, Product> kafkaTemplate,
                           AfterLiveProcess afterLiveProcess, ProductViewedCountService countService) {
         this.productRepository = productRepository;
-        this.productDtoConverter = productDtoConverter;
         this.implUploadService = implUploadService;
         this.kafkaTemplate = kafkaTemplate;
         this.afterLiveProcess = afterLiveProcess;
@@ -54,7 +52,7 @@ public class ProductService {
     public List<ProductDto> getProductData(int page, int count) {
         return this.productRepository.findAll(PageRequest.of(page, count))
                 .stream()
-                .map(productDtoConverter::convertToProduct)
+                .map(ProductDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +68,7 @@ public class ProductService {
         CompletableFuture.runAsync(() ->
                 afterLiveProcess.afterLiveProcess(product.getBuyerId())
                         .failureHandler(e -> LOGGER.error("Error while processing after live process {}", e)));
-        return CompletableFuture.completedFuture(productDtoConverter.convertToProduct(productRepository.save(product)));
+        return CompletableFuture.completedFuture(ProductDtoConverter.convertToProduct(productRepository.save(product)));
 
     }
 
@@ -102,7 +100,7 @@ public class ProductService {
     public List<ProductDto> getByNameAndCategory(String productName, Long categoryId) {
         return this.productRepository.getByProductNameOrCategory_Id(productName, categoryId)
                 .stream()
-                .map(productDtoConverter::convertToProduct)
+                .map(ProductDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
 
@@ -114,7 +112,7 @@ public class ProductService {
     }
 
     public ProductDto getSearchProduct(String keyword) {
-        return productDtoConverter.convertToProduct(findSearchProduct(keyword));
+        return ProductDtoConverter.convertToProduct(findSearchProduct(keyword));
 
     }
 
@@ -122,7 +120,7 @@ public class ProductService {
         Sort sort = Sort.by(Sort.Direction.ASC, "productPrice");
         return this.productRepository.findAll(sort)
                 .stream()
-                .map(productDtoConverter::convertToProduct)
+                .map(ProductDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
 
@@ -139,7 +137,7 @@ public class ProductService {
         countService.increaseProductViewedCount(incrementView);
 
 
-        return this.productDtoConverter.convertToProduct(
+        return ProductDtoConverter.convertToProduct(
                 findByIdProduct(id)
         );
     }

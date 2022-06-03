@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 public enum ProductTypeFlow {
 
+
     ZERO {
         @Override
         public void typeCheckForServiceFee(ProductPrice price) {

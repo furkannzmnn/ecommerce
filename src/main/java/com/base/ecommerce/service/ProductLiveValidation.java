@@ -7,7 +7,6 @@ import com.base.ecommerce.exception.GenericException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class ProductLiveValidation {

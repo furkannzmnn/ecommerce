@@ -2,12 +2,14 @@ package com.base.ecommerce.dto.converter;
 
 import com.base.ecommerce.dto.ProductDto;
 import com.base.ecommerce.model.Product;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ProductDtoConverter {
 
-    public ProductDto convertToProduct(Product from) {
+public final class ProductDtoConverter {
+
+    private ProductDtoConverter() {
+        throw new RuntimeException("utility");
+    }
+    public static ProductDto convertToProduct(Product from) {
         return new ProductDto(
                 from.getId(),
                 from.getProductName(),

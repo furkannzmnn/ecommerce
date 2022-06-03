@@ -22,23 +22,21 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryService {
 
-    private static final Logger LOGGER = LogManager.getLogger(ProductService.class);
+    private static final Logger LOGGER = LogManager.getLogger(CategoryService.class);
 
     private final CategoryRepository categoryRepository;
-    private final CategoryDtoConverter categoryDtoConverter;
     public static final String CATEGORY_INVALID = "Oppss.... There was a problem creating the category.";
 
 
-    public CategoryService(CategoryRepository categoryRepository,CategoryDtoConverter categoryDtoConverter) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.categoryDtoConverter = categoryDtoConverter;
     }
 
     @Cacheable(value = "category")
     public List<CategoryDto> getCategoryData(){
         return categoryRepository.findAll()
                 .stream()
-                .map(categoryDtoConverter::convertToCategory)
+                .map(CategoryDtoConverter::convertToCategory)
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +49,7 @@ public class CategoryService {
         LOGGER.info("Category created successfully");
         LOGGER.info("Category name: {}", category.getCategoryName());
         LOGGER.info("Category id: {}", category.getId());
-        return categoryDtoConverter.convertToCategory(
+        return CategoryDtoConverter.convertToCategory(
                 categoryRepository.save(category)
         );
 

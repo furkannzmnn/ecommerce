@@ -8,6 +8,7 @@ import com.base.ecommerce.dto.request.FavoriteSaveRequest;
 import com.base.ecommerce.exception.customException.FavoriteAlreadyException;
 import com.base.ecommerce.exception.customException.ProductNotFoundException;
 import com.base.ecommerce.model.Favorite;
+import com.base.ecommerce.model.user.User;
 import com.base.ecommerce.repository.FavoriteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +27,14 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final ProductService productService;
-    private final FavoriteDtoConverter favoriteDtoConverter;
-    private final FavoriteSaveRequestConverter favoriteSaveRequestConverter;
     private static final String PRODUCT_IS_ALREADY_ATTACHED = "the product is already attached";
     private final Logger logger = LoggerFactory.getLogger(FavoriteService.class);
 
 
     @Autowired
-    public FavoriteService(FavoriteRepository favoriteRepository, ProductService productService, FavoriteDtoConverter favoriteDtoConverter,
-                           FavoriteSaveRequestConverter favoriteSaveRequestConverter) {
+    public FavoriteService(FavoriteRepository favoriteRepository, ProductService productService) {
         this.favoriteRepository = favoriteRepository;
         this.productService = productService;
-        this.favoriteDtoConverter = favoriteDtoConverter;
-        this.favoriteSaveRequestConverter = favoriteSaveRequestConverter;
-
-
     }
 
     @CacheEvict(cacheNames = "favoriteSaveRequest", allEntries = true)
@@ -52,18 +46,18 @@ public class FavoriteService {
             throw new FavoriteAlreadyException(PRODUCT_IS_ALREADY_ATTACHED);
         } else {
             logger.info("favorite object added");
-            Favorite favorite = favoriteSaveRequestConverter.favoriteSaveRequestToFavorite(favoriteSaveRequest);
-            return favoriteDtoConverter.convertToFavorite(favoriteRepository.save(favorite));
+            Favorite favorite = FavoriteSaveRequestConverter.favoriteSaveRequestToFavorite(favoriteSaveRequest);
+            return FavoriteDtoConverter.convertToFavorite(favoriteRepository.save(favorite));
         }
 
     }
 
     @Cacheable(cacheNames = "favoriteSaveRequest")
-    public List<?> getFavorite() {
+    public List<Object> getFavorite() {
 
         final List<FavoriteDto> list = this.favoriteRepository.findAll()
                 .stream()
-                .map(favoriteDtoConverter::convertToFavorite)
+                .map(FavoriteDtoConverter::convertToFavorite)
                 .collect(Collectors.toList());
 
         return list.stream()

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class StopWordFilter implements Filter {
 
-    static final String[] stopWords = new String[9];
+    private static final String[] stopWords = new String[9];
     private final Logger logger = LoggerFactory.getLogger(StopWordFilter.class);
 
 

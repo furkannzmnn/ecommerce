@@ -42,7 +42,8 @@ public class RateLimiterService {
 
 
     public void getHttpStatus() {
-        final User user = getUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final User user = getUser(authentication.getName());
         if (user != null) {
             if (getHitCount(user.getId(), hitCount) > 10) {
                 throw GenericException.builder().message("Rate limit exceeded").status(HttpStatus.TOO_MANY_REQUESTS).build();
@@ -51,10 +52,9 @@ public class RateLimiterService {
         }
     }
 
-    @Cacheable(value = "authentication")
-    public User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userRepository.findByUsername(authentication.getName()).orElse(null);
+    @Cacheable(value = "authentication", key = "#username")
+    public User getUser(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 }
 

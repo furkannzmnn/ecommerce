@@ -4,10 +4,9 @@ import com.base.ecommerce.dto.FavoriteDto;
 import com.base.ecommerce.model.Favorite;
 import org.springframework.stereotype.Component;
 
-@Component
-public class FavoriteDtoConverter {
+public final class FavoriteDtoConverter {
 
-    public FavoriteDto convertToFavorite(Favorite from){
+    public static FavoriteDto convertToFavorite(Favorite from){
         return new FavoriteDto(
                 from.getProductId()
         );

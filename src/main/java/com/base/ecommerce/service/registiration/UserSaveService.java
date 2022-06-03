@@ -17,13 +17,12 @@ public class UserSaveService {
 
     private final UserRepository userRepository;
     private final MailService mailService;
-    private final UserDtoConverter converter;
     private final VerificationTokenRepository tokenRepository;
 
-    public UserSaveService(UserRepository userRepository, MailService mailService, UserDtoConverter converter, VerificationTokenRepository tokenRepository) {
+    public UserSaveService(UserRepository userRepository, MailService mailService,
+                           VerificationTokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.mailService = mailService;
-        this.converter = converter;
         this.tokenRepository = tokenRepository;
     }
 
@@ -42,16 +41,10 @@ public class UserSaveService {
             ioException.printStackTrace();
         }
 
-        return converter.convertToUserDtoToUser(userEntity);
+        return UserDtoConverter.convertToUserDtoToUser(userEntity);
 
     }
 
-    public void createVerificationToken(User user, String token) {
-        VerificationToken myToken = new VerificationToken(token, user);
-
-        tokenRepository.save(myToken);
-
-    }
 
     public VerificationToken getVerificationToken(String token) {
        return tokenRepository.findByToken(token);

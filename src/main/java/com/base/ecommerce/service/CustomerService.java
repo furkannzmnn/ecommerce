@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,7 +29,7 @@ public class CustomerService {
                 .valueOf(customer.getCustomerType().name())
                 .execute(customer.getCustomerPrice());
 
-        customer.getCustomerPrice().setCommissionFee(customerCommission);
+        Objects.requireNonNull(customer.getCustomerPrice()).setCommissionFee(customerCommission);
         customerRepository.save(customer);
         return customer;
     }

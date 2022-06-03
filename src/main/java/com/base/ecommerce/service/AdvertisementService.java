@@ -18,22 +18,19 @@ public class AdvertisementService {
 
     private final ProductService productService;
     private final AdvertisementRepository advertisementRepository;
-    private final ProductDtoConverter productDtoConverter;
-
     public AdvertisementService(ProductService productService,
-                                AdvertisementRepository advertisementRepository, ProductDtoConverter productDtoConverter) {
+                                AdvertisementRepository advertisementRepository) {
         this.productService = productService;
         this.advertisementRepository = advertisementRepository;
-        this.productDtoConverter = productDtoConverter;
     }
 
-    public ProductDto IsTheProductSold(ProductIsActiveUpdateRequest request) {
+    public ProductDto isTheProductSold(ProductIsActiveUpdateRequest request) {
         Optional<Product> optionalProduct = Optional.of(productService.findByIdProduct(request.getId()));
         optionalProduct.ifPresent(products -> {
             products.setActive(request.isActive());
             advertisementRepository.save(products);
         });
-        return optionalProduct.map(productDtoConverter::convertToProduct).orElseThrow(
+        return optionalProduct.map(ProductDtoConverter::convertToProduct).orElseThrow(
                 ()-> new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND.name())
         );
     }
@@ -42,7 +39,7 @@ public class AdvertisementService {
 
         List<Product> product = advertisementRepository.getByIsActiveTrue();
         return product.stream()
-                .map(productDtoConverter::convertToProduct)
+                .map(ProductDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +60,7 @@ public class AdvertisementService {
     public List<ProductDto> isNotActiveProductList(){
         List<Product> product = advertisementRepository.getByIsActiveFalse();
         return product.stream()
-                .map(productDtoConverter::convertToProduct)
+                .map(ProductDtoConverter::convertToProduct)
                 .collect(Collectors.toList());
     }
 }

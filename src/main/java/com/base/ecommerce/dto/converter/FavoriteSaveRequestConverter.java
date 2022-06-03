@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
-public class FavoriteSaveRequestConverter {
+public final class FavoriteSaveRequestConverter {
 
-    public Favorite favoriteSaveRequestToFavorite(FavoriteSaveRequest favoriteSaveRequest){
+    public static Favorite favoriteSaveRequestToFavorite(FavoriteSaveRequest favoriteSaveRequest){
         return new Favorite(
                 Objects.requireNonNull(favoriteSaveRequest.getProductId())
         );
