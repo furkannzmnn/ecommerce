@@ -56,7 +56,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    @Async
+
     @Transactional
     public CompletableFuture<ProductDto> addProduct(ProductRequest productRequest, ProductStatus status) {
 

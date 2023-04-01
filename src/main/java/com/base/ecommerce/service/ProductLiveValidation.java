@@ -30,7 +30,9 @@ public class ProductLiveValidation {
 
 
         if (!errors.isEmpty()) {
-            throw GenericException.builder().errorCode(ErrorCode.VALIDATION_EXCEPTION).build();
+            throw GenericException.builder()
+                    .data(errors)
+                    .errorCode(ErrorCode.VALIDATION_EXCEPTION).build();
         }
     }
 }

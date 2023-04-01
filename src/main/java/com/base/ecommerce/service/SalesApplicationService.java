@@ -16,7 +16,7 @@ public class SalesApplicationService {
         this.applicationRepository = applicationRepository;
     }
 
-    public SalesApplicationDto apply (SalesApplicationDto dto) {
+    public SalesApplicationDto apply(SalesApplicationDto dto) {
 
         SalesApplicationTemplate salesApplicationTemplate = CustomerTypeFlow.valueOf(dto.getCustomerType().name()).execute();
         salesApplicationTemplate.apply(dto);
